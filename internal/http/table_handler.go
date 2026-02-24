@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/arizaguaca/table/internal/domain"
@@ -19,8 +20,11 @@ func NewTableHandler(u domain.TableUsecase) *TableHandler {
 
 func (h *TableHandler) Create(w http.ResponseWriter, r *http.Request) {
 	var table domain.Table
+
+	// Para debugging: leer el cuerpo y mostrarlo si falla el decode
 	if err := json.NewDecoder(r.Body).Decode(&table); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("Error decoding JSON: %v", err)
+		http.Error(w, "Malformed JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
